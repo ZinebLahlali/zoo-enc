@@ -1,28 +1,18 @@
-const addtop = document.getElementById("addtop");
-const Animal = document.querySelector(".animal");
-const cancel = document.getElementById("animalCancel");
-const btnHabitat = document.getElementById("btnHabitat");
-const habitat= document.querySelector(".habitat");
-const habitatCancel = document.getElementById("habitatCancel");
+// Get references
+const togglePopupBtn = document.getElementById("togglePopupBtn");
+const popupForm = document.getElementById("popupForm");         
+const closePopup = document.getElementById("closePopup");         
 
-addtop.addEventListener('click', ()=>{
- Animal.classList.remove("hidden");
+togglePopupBtn.addEventListener('click', () => {
+    popupForm.style.display = "flex";
+});
 
-})
-     cancel.addEventListener('click', ()=>{
-     Animal.classList.add("hidden");
+closePopup.addEventListener('click', () => {
+    popupForm.style.display = "none";
+});
 
-    })
-
-
-
-
-
-
-
-
-
-
-
-
-
+popupForm.addEventListener('click', (e) => {
+    if (e.target === popupForm) { 
+        popupForm.style.display = "none";
+    }
+});

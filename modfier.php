@@ -1,144 +1,88 @@
-
-<?php 
-
+<?php
 include "./dbconnect.php";
 
- $id = "";
- $name = "";
- $type_alimentaire = "";
- $image ="";
- $errorMessage = "";
- $successMessage ="";
- if($_SERVER['REQUEST_METHOD'] == 'GET'){
-          if(!isset($_GET["id"])){
-
-          header("Location: animals.php");
-        exit;
-
-    } 
-    $id = $_GET["id"];
-    $sql = "SELECT * FROM animals WHERE id = $id";
-    $result = $conn->query($sql);
-    $row = $result->fetch_assoc();
-   if (!$row){
-    header("location: animals.php");
+$id = $_GET['id'] ?? null;
+if (!$id) {
+    header("Location: animals.php");
     exit;
-   }
+}
 
-    $name  = $row['name'];
-    $type_alimentaire  = $row['type_alimentaire'];
-    $image = $row['image'];
+$sql = "SELECT * FROM animals WHERE id=$id";
+$result = mysqli_query($conn, $sql);
+if (!$result || mysqli_num_rows($result) == 0) {
+    header("Location: animals.php");
+    exit;
+}
+$animal = mysqli_fetch_assoc($result);
 
-    
- }else {
+$name = $animal['name'];
+$type_alimentaire = $animal['type_alimentaire'];
+$image = $animal['image'];
+$habitat = $animal['Id_habitat'];
 
-    $id = $_POST["id"];
-    $name  = $_POST['name'];
-    $type_alimentaire  = $_POST['type_alimentaire'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = $_POST['name'];
+    $type_alimentaire = $_POST['type_alimentaire'];
     $image = $_POST['image'];
-     
-    do{
-        if(empty($id) || empty($name) || empty( $type_alimentaire) || empty($image) ){
-           $errorMessage = "All the fields are required";
-           break;  
+    $habitat = $_POST['Id_habitat'];
+
+    if (empty($name) || empty($type_alimentaire) || empty($image) || empty($habitat)) {
+        $errorMessage = "All fields are required!";
+    } else {
+        $sql = "UPDATE animals 
+                SET name='$name', type_alimentaire='$type_alimentaire', image='$image', Id_habitat=$habitat
+                WHERE id=$id";
+        if (mysqli_query($conn, $sql)) {
+            header("Location: animals.php?success=1");
+            exit;
+        } else {
+            $errorMessage = "Error updating animal: " . mysqli_error($conn);
         }
-
-         header("Location: animals.php");
-         exit;
-
-
-    } while(true);
-
-
-
-
-
-    }  
-    
- 
-
+    }
+}
 ?>
-
 
 <!doctype html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Zoo Kids — Cartoon UI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-  
-    :root {
-        --card: #fff8f2;
-        --accent: #ffb86b
-    }
-
-    body {
-        font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial
-    }
-
-    .cartoon-shadow {
-        box-shadow: 0 10px 0 rgba(0, 0, 0, 0.06), 0 30px 60px rgba(255, 184, 107, 0.06)
-    }
-
-    .rounded-blobby {
-        border-radius: 18px 40px 18px 40px
-    }
-
-    .kid-font {
-        letter-spacing: 0.2px
-    }
-
- 
-    @media (max-width:640px) {
-        .sidebar {
-            display: none
-        }
-    }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Edit Animal</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-yellow-50 p-6">
 
-<div>
-    <form  action="animals.php" method="GET" class="flex flex-col gap-3 ">
-        <input type="hidden" value="<?php echo $id; ?>" name="id">
-            <legend class="text-lg font-semibold mb-2">Animal Information</legend>
+<h1 class="text-2xl font-bold mb-4">Edit Animal</h1>
 
-            <label for="name">Name of animal:</label>
-            <input type="text" id="name" name="name" value="<?php echo $name; ?>" 
-                   class="border rounded px-3 py-2" />
+<?php if (!empty($errorMessage)) { echo '<p class="text-red-500">'.$errorMessage.'</p>'; } ?>
 
-               <label for="type_alimentaire">Type food:</label>
-            <select type="text" id="type_alimentaire" name="type_alimentaire" value="<?php echo $type_alimentaire; ?>"
-                   class="border rounded px-3 py-2" >
-                   <option value="Carnivore">Carnivore</option>
-                    <option value="Herbivore">Herbivore</option>
-                     <option value="Omnivore">Omnivore</option>
-            </select>
-                      <label for="habitat">Name of habitat:</label>
-            <select type="text" name="Id_habitat" id="habitat"  value="<?php echo $habitat; ?>"
-                   class="border rounded px-3 py-2" >
-                     <option value="1">Savanna</option>
-                     <option value="2">Jungle</option>
-                     <option value="3">Desert</option>
-                     <option value="4">Ocean</option>
-            </select>
+<form action="modfier.php?id=<?php echo $id; ?>" method="POST" class="p-4 bg-white rounded shadow w-96">
+    <label>Name:</label>
+    <input type="text" name="name" class="border p-1 w-full mb-2" value="<?php echo $name; ?>" required>
 
-            <label for="image">Enter the URL:</label>
-            <input type="url" id="image" name="image" value="<?php echo $image; ?>" 
-                   class="border rounded px-3 py-2" />
-                   
+    <label>Type Alimentaire:</label>
+    <select name="type_alimentaire" class="border p-1 w-full mb-2" required>
+        <option value="Carnivore" <?php if($type_alimentaire=='Carnivore') echo 'selected'; ?>>Carnivore</option>
+        <option value="Herbivore" <?php if($type_alimentaire=='Herbivore') echo 'selected'; ?>>Herbivore</option>
+        <option value="Omnivore" <?php if($type_alimentaire=='Omnivore') echo 'selected'; ?>>Omnivore</option>
+    </select>
 
-            <div class="flex gap-4 ">
-                <input type="submit"
-                    name="submit" value="Submit"
-                   class="mt-3 bg-green-500 text-white px-4 py-2 rounded cursor-pointer w-full" />
-             <button type="button" class=" cancel bg-orange-300 rounded cursor-pointer text-white px-4 py-2 justify-end items-end w-full ">Cancel</button>    
-            </div>  
-        </form>
-</div>
+    <label>Habitat:</label>
+    <select name="Id_habitat" class="border p-1 w-full mb-2" required>
+        <?php
+        $habitats = mysqli_query($conn, "SELECT Id_h, name FROM habitas");
+        while ($row = mysqli_fetch_assoc($habitats)) {
+            $selected = ($row['Id_h'] == $habitat) ? 'selected' : '';
+            echo "<option value='{$row['Id_h']}' $selected>{$row['name']}</option>";
+        }
+        ?>
+    </select>
+
+    <label>Image URL:</label>
+    <input type="url" name="image" class="border p-1 w-full mb-2" value="<?php echo $image; ?>" required>
+
+    <input type="submit" value="Update Animal" class="bg-blue-500 text-white px-3 py-1 rounded cursor-pointer">
+</form>
 
 </body>
 </html>

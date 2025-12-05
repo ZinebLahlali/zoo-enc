@@ -2,11 +2,11 @@
 include "./dbconnect.php";
 
 
-if ($conn->connect_errno === 0) {
-    echo " Connexion réussie à la base de données !";
-} else {
-    echo " Erreur de connexion : " . $conn->connect_error;
-}
+// if ($conn->connect_errno === 0) {
+//     echo " Connexion réussie à la base de données !";
+// } else {
+//     echo " Erreur de connexion : " . $conn->connect_error;
+// }
 
 
 
