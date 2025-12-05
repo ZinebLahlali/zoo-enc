@@ -19,7 +19,7 @@ VALUES("Savanna", "The savanna is a hot, dry grassland with scattered trees.") ,
 ("Desert", "The desert is a very dry place with little rain."),("Ocean", "The ocean is a large body of salt water that covers most of the Earth")
   
  INSERT INTO animals (name, type_alimentaire, image)
-VALUES("jugar", "Herbivore","photo.jpg")
+VALUES("Zebra", "Carnevore","https://cdn8.futura-sciences.com/a1080/images/zebre.jpg")
 
 UPDATE animals
 SET type_alimentaire = "Carnivorous"
