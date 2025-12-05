@@ -1,3 +1,9 @@
+<?php 
+   include "./dbconnect.php";
+
+?>
+
+
 <!doctype html>
 <html lang="en">
 
@@ -130,6 +136,43 @@
                             habitat</button>
                     </div>
                 </div>
+
+
+
+                 <?php  $sql = 'SELECT `name`, descreption FROM habitas'; ?>
+               <div class="grid grid-cols-3 gap-3">
+                            <?php 
+               
+                            if($result = $conn -> query($sql)){
+                                if(mysqli_num_rows($result)>0){
+                                    
+                                  
+                                
+                                    while($row = mysqli_fetch_array($result)){
+                                        echo "<div class='border border-4'>";
+                                        echo "<p class='p-2'>" . $row['name'] . "</p>";
+                                        echo "<p class='p-1'>" . $row['descreption'] . "</p>";
+                                        echo "<div class='flex gap-4 p-2 mt-4'>";
+                                          echo "<button class='bg-green-400 w-full rounded-lg '>Edit</button>";
+                                          echo "<button class='justify-end items-end w-full rounded-lg bg-red-400'>Delete</button>";
+                                        echo "</div>";
+                             echo "</div>";
+                                    }   
+                                    
+                                    mysqli_free_result($result);
+
+                                } else{
+                                     echo "No records matching your query were found.";
+                                } }else {
+                                    echo "ERROR: Could not able to execute $sql.";
+                                    mysqli_error($conn);
+                                }
+
+                            
+                            mysqli_close($conn);
+                ?>
+               </div>
+
                 
 
 

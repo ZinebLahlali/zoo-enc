@@ -18,8 +18,8 @@ INSERT INTO habitas (name, descreption)
 VALUES("Savanna", "The savanna is a hot, dry grassland with scattered trees.") ,("Jungle", "The jungle is a dense, tropical forest with many plants and tall trees."),
 ("Desert", "The desert is a very dry place with little rain."),("Ocean", "The ocean is a large body of salt water that covers most of the Earth")
   
- INSERT INTO animals (name, type_alimentaire, image, Id_habitat)
-VALUES("Jaguar", "Herbivore","photo.jpg", 1)
+ INSERT INTO animals (name, type_alimentaire, image)
+VALUES("jugar", "Herbivore","photo.jpg")
 
 UPDATE animals
 SET type_alimentaire = "Carnivorous"

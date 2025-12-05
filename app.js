@@ -4,5 +4,10 @@ const cancel = document.querySelector("cancel");
 
 addtop.addEventListener('click', ()=>{
  Animal.classList.remove("hidden");
- cancel.classList.add("hidden");
+
 })
+
+addtop.addEventListener('click', ()=>{
+     cancel.classList.add("hidden");
+
+    })
