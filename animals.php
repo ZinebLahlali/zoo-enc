@@ -1,8 +1,11 @@
-<?php 
-   include "./dbconnect.php";
- $name = "";
- $type_alimentaire = "";
- $image ="";
+<?php
+include "./dbconnect.php";
+
+
+
+$name = "";
+$type_alimentaire = "";
+$image = "";
 if (isset($_POST['submit'])) {
 
     $name = $_POST['name'];
@@ -10,47 +13,59 @@ if (isset($_POST['submit'])) {
     $habitat = $_POST['Id_habitat'];
     $image = $_POST['image'];
 
-    $sql = "INSERT INTO animals (`name`, type_alimentaire, `image`)
-            VALUES ('$name', '$type_alimentaire', '$habitat' , '$image')";
+
+    if (empty($name) || empty($type_alimentaire) || empty($habitat) || empty($image)) {
+        die("All fields are required!");
+    }
+
+    $check = mysqli_query($conn, "SELECT * FROM habitas WHERE Id_h = $habitat");
+    if (mysqli_num_rows($check) == 0) {
+        die("Error: selected habitat does not exist!");
+    }
+
+    $sql = "INSERT INTO animals (`name`, `type_alimentaire`, `Id_habitat`, `image`)
+            VALUES ('$name', '$type_alimentaire', $habitat, '$image')";
 
     if (mysqli_query($conn, $sql)) {
-
         header("Location: animals.php?success=1");
         exit;
-
     } else {
-
         echo "Error: " . mysqli_error($conn);
     }
 }
-if(isset($_GET['submit'])) {
-    $id= $_GET['id'];
-    $name  = $_GET['name'];
-    $type_alimentaire  = $_GET['type_alimentaire'];
-    $habitat=$_POST['Id_habitat'];
-    $image = $_GET['image'];
 
-    $sql = "UPDATE animals  SET name= '$name', type_alimentaire='$type_alimentaire' , image= '$image', Id_habitat= '$habitat' WHERE id= ".$id;
-           
+
+if (isset($_POST['submit'])) {  
+    $id = $_POST['id'];
+    $name  = $_POST['name'];
+    $type_alimentaire  = $_POST['type_alimentaire'];
+    $habitat = $_POST['Id_habitat'];
+    $image = $_POST['image'];
+
+    $check = mysqli_query($conn, "SELECT * FROM habitas WHERE Id_h = $habitat");
+    if (mysqli_num_rows($check) == 0) {
+        die("Error: selected habitat does not exist!");
+    }
+
+    $sql = "UPDATE animals 
+    SET name = '$name', type_alimentaire = '$type_alimentaire', image = '$image', Id_habitat = $habitat
+            WHERE id = $id";
 
     if (mysqli_query($conn, $sql)) {
-
         header("Location: animals.php?success=1");
         exit;
-
     } else {
-
         echo "Error: " . mysqli_error($conn);
     }
 }
-if(isset($_GET["delete"])){
+
+if (isset($_GET["delete"])) {
     $delete_id = $_GET["delete"];
-    $query_delete = "DELETE FROM animals WHERE id= ".$delete_id;
+    $query_delete = "DELETE FROM animals WHERE id= " . $delete_id;
     if (mysqli_query($conn, $query_delete)) {
 
         header("Location: animals.php?success=1");
         exit;
-
     } else {
 
         echo "Error: " . mysqli_error($conn);
@@ -69,34 +84,33 @@ if(isset($_GET["delete"])){
     <title>Zoo Kids — Cartoon UI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-  
-    :root {
-        --card: #fff8f2;
-        --accent: #ffb86b
-    }
-
-    body {
-        font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial
-    }
-
-    .cartoon-shadow {
-        box-shadow: 0 10px 0 rgba(0, 0, 0, 0.06), 0 30px 60px rgba(255, 184, 107, 0.06)
-    }
-
-    .rounded-blobby {
-        border-radius: 18px 40px 18px 40px
-    }
-
-    .kid-font {
-        letter-spacing: 0.2px
-    }
-
- 
-    @media (max-width:640px) {
-        .sidebar {
-            display: none
+        :root {
+            --card: #fff8f2;
+            --accent: #ffb86b
         }
-    }
+
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial
+        }
+
+        .cartoon-shadow {
+            box-shadow: 0 10px 0 rgba(0, 0, 0, 0.06), 0 30px 60px rgba(255, 184, 107, 0.06)
+        }
+
+        .rounded-blobby {
+            border-radius: 18px 40px 18px 40px
+        }
+
+        .kid-font {
+            letter-spacing: 0.2px
+        }
+
+
+        @media (max-width:640px) {
+            .sidebar {
+                display: none
+            }
+        }
     </style>
 </head>
 
@@ -195,93 +209,98 @@ if(isset($_GET["delete"])){
 
 
 
-<!-- POPUP -->
-<div
-     class="animal flex fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center">
+                <!-- POPUP -->
+                <div
+                    class="animal flex fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center">
 
-    <div class="bg-white p-6 rounded-xl w-full max-w-md shadow-xl">
-
-       
-        <form  action="animals.php" method="POST" class="flex flex-col gap-3 ">
-            <legend class="text-lg font-semibold mb-2">Animal Information</legend>
-
-            <label for="name">Name of animal:</label>
-            <input type="text" id="name" name="name" value="<?php echo $name; ?>" 
-                   class="border rounded px-3 py-2" />
-
-            <label for="type_alimentaire">Type food:</label>
-            <select type="text" id="type_alimentaire" name="type_alimentaire" value="<?php echo $type_alimentaire; ?>"
-                   class="border rounded px-3 py-2" >
-                   <option value="Carnivore">Carnivore</option>
-                    <option value="Herbivore">Herbivore</option>
-                     <option value="Omnivore">Omnivore</option>
-                </select>
-                <label for="habitat">Name of habitat:</label>
-            <select type="text" name="Id_habitat" id="habitat"  value="<?php echo $habitat; ?>"
-                   class="border rounded px-3 py-2" >
-                     <option value="1">Savanna</option>
-                     <option value="2">Jungle</option>
-                     <option value="3">Desert</option>
-                     <option value="4">Ocean</option>
-                </select>
-
-            <label for="image">Enter the URL:</label>
-            <input type="url" id="image" name="image" value="<?php echo $image; ?>" 
-                   class="border rounded px-3 py-2" />
-                   
-
-            <div class="flex gap-4 ">
-                <input type="submit"
-                    name="submit" value="Submit"
-                   class="mt-3 bg-green-500 text-white px-4 py-2 rounded cursor-pointer w-full" />
-             <button type="button" id="animalCancel" class="bg-orange-300 rounded cursor-pointer text-white px-4 py-2 justify-end items-end w-full ">Cancel</button>    
-            </div>  
-        </form>
-    </div>
-</div>
+                    <div class="bg-white p-6 rounded-xl w-full max-w-md shadow-xl">
 
 
+                        <form action="animals.php" method="POST" class="flex flex-col gap-3 ">
+                            <legend class="text-lg font-semibold mb-2">Animal Information</legend>
 
+                            <label for="name">Name of animal:</label>
+                            <input type="text" id="name" name="name" value="<?php echo $name; ?>"
+                                class="border rounded px-3 py-2" />
 
+                            <label for="type_alimentaire">Type food:</label>
+                            <select type="text" id="type_alimentaire" name="type_alimentaire" value="<?php echo $type_alimentaire; ?>"
+                                class="border rounded px-3 py-2">
+                                <option value="Carnivore">Carnivore</option>
+                                <option value="Herbivore">Herbivore</option>
+                                <option value="Omnivore">Omnivore</option>
+                            </select>
+                            <label for="habitat">Name of habitat:</label>
+                            <select name="Id_habitat" id="habitat" class="border rounded px-3 py-2">
+                                <option value="">Select habitat</option>
+                                <?php
+                                $habitats = mysqli_query($conn, "SELECT Id_h, name FROM habitas");
 
-                <?php  $sql = 'SELECT `name`, `image`, type_alimentaire,id FROM animals'; ?>
-               <div class="grid grid-cols-3 gap-3">
-                            <?php 
-               
-                            if($result = mysqli_query($conn,$sql)){
-                                if(mysqli_num_rows($result)>0){
-                                    
-                                  
-                                
-                                    while($row = mysqli_fetch_array($result)){
-                                        echo "<div class='border border-4 h-[75%]'>";
-                                        echo " <img class='w-full h-1/2 object-cover border-2 ' src=".$row['image'].">";
-                                        echo "<p class='p-2'>" . $row['name'] . "</p>";
-                                        echo "<p class='p-1'>" . $row['type_alimentaire'] . "</p>";
-                                        echo "<div class='flex justify-evenly gap-4 p-2 mt-4 w-full'>";
-                                          echo "<a href='modfier.php?id=" . $row["id"] . "'><button class='px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm w-[120px]'>Edit</button></a>";
-                                          echo "<a href='animals.php?delete=" . $row["id"] ."'><button class=' px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm w-[120px]'>Delete</button></a>";
-                                          echo "</div>";
-                                      
-                             echo "</div>";
-                                    }   
-                                    
-                                    mysqli_free_result($result);
-
-                                } else{
-                                     echo "No records matching your query were found.";
-                                } }else {
-                                    echo "ERROR: Could not able to execute $sql.";
-                                    mysqli_error($conn);
+                                while ($row = mysqli_fetch_assoc($habitats)) {
+                                    echo '<option value="' . $row['Id_h'] . '">' . $row['name'] . '</option>';
                                 }
+                                ?>
+                            </select>
 
-                            
-                            mysqli_close($conn);
-                ?>
-               </div>
 
-               
+                            <label for="image">Enter the URL:</label>
+                            <input type="url" id="image" name="image" value="<?php echo $image; ?>"
+                                class="border rounded px-3 py-2" />
 
-<script src="app.js"></script>
+
+                            <div class="flex gap-4 ">
+                                <input type="submit"
+                                    name="submit" value="Submit"
+                                    class="mt-3 bg-green-500 text-white px-4 py-2 rounded cursor-pointer w-full" />
+                                <button type="button" id="animalCancel" class="bg-orange-300 rounded cursor-pointer text-white px-4 py-2 justify-end items-end w-full ">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+
+
+
+
+                <?php $sql = 'SELECT `name`, `image`, type_alimentaire,id FROM animals'; ?>
+                <div class="grid grid-cols-3 gap-3">
+                    <?php
+
+                    if ($result = mysqli_query($conn, $sql)) {
+                        if (mysqli_num_rows($result) > 0) {
+
+
+
+                            while ($row = mysqli_fetch_array($result)) {
+                                echo "<div class='border border-4 h-full'>";
+                                echo " <img class='w-full h-1/2 object-cover border-2 ' src=" . $row['image'] . ">";
+                                echo "<p class='p-2'>" . $row['name'] . "</p>";
+                                echo "<p class='p-1'>" . $row['type_alimentaire'] . "</p>";
+                                echo "<div class='flex justify-evenly gap-4 p-2 mt-4 w-full'>";
+                                echo "<a href='modfier.php?id=" . $row["id"] . "'><button class='px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm w-[120px]'>Edit</button></a>";
+                                echo "<a href='animals.php?delete=" . $row["id"] . "'><button class=' px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm w-[120px]'>Delete</button></a>";
+                                echo "</div>";
+
+                                echo "</div>";
+                            }
+
+                            mysqli_free_result($result);
+                        } else {
+                            echo "No records matching your query were found.";
+                        }
+                    } else {
+                        echo "ERROR: Could not able to execute $sql.";
+                        mysqli_error($conn);
+                    }
+
+
+                    mysqli_close($conn);
+                    ?>
+                </div>
+
+
+
+                <script src="app.js"></script>
 </body>
+
 </html>
