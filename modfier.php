@@ -3,8 +3,8 @@
 
 include "./dbconnect.php";
 
-$id = "";
-$name = "";
+ $id = "";
+ $name = "";
  $type_alimentaire = "";
  $image ="";
  $errorMessage = "";
@@ -30,9 +30,9 @@ $name = "";
     $image = $row['image'];
 
     
-}else {
+ }else {
 
-    $id = $_POST["id"]
+    $id = $_POST["id"];
     $name  = $_POST['name'];
     $type_alimentaire  = $_POST['type_alimentaire'];
     $image = $_POST['image'];
@@ -42,16 +42,18 @@ $name = "";
            $errorMessage = "All the fields are required";
            break;  
         }
-        $sql = "UPDATE animals".
-         "SET name = '$name', '$type_alimentaire ', "
 
-    } while(true)
-
+         header("Location: animals.php");
+         exit;
 
 
+    } while(true);
 
 
-    }
+
+
+
+    }  
     
  
 
@@ -100,21 +102,29 @@ $name = "";
 <body>
 
 <div>
-    <form  action="animals.php" method="POST" class="flex flex-col gap-3 ">
-        <input type="hidden" value="<?php echo $id; ?>">
+    <form  action="animals.php" method="GET" class="flex flex-col gap-3 ">
+        <input type="hidden" value="<?php echo $id; ?>" name="id">
             <legend class="text-lg font-semibold mb-2">Animal Information</legend>
 
             <label for="name">Name of animal:</label>
             <input type="text" id="name" name="name" value="<?php echo $name; ?>" 
                    class="border rounded px-3 py-2" />
 
-            <label for="type_alimentaire">Type food:</label>
+               <label for="type_alimentaire">Type food:</label>
             <select type="text" id="type_alimentaire" name="type_alimentaire" value="<?php echo $type_alimentaire; ?>"
                    class="border rounded px-3 py-2" >
                    <option value="Carnivore">Carnivore</option>
                     <option value="Herbivore">Herbivore</option>
                      <option value="Omnivore">Omnivore</option>
-                </select>
+            </select>
+                      <label for="habitat">Name of habitat:</label>
+            <select type="text" name="Id_habitat" id="habitat"  value="<?php echo $habitat; ?>"
+                   class="border rounded px-3 py-2" >
+                     <option value="1">Savanna</option>
+                     <option value="2">Jungle</option>
+                     <option value="3">Desert</option>
+                     <option value="4">Ocean</option>
+            </select>
 
             <label for="image">Enter the URL:</label>
             <input type="url" id="image" name="image" value="<?php echo $image; ?>" 

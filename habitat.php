@@ -1,5 +1,32 @@
 <?php 
    include "./dbconnect.php";
+   
+  $name = "";
+ $descreption = "";
+ $image = "";
+if (isset($_POST['submit'])) {
+
+    $name  = $_POST['name'];
+    $descreption  = $_POST['descreption'];
+    $image = $_POST['image'];
+  
+
+    $sql = "INSERT INTO habitas (name, descreption, image)
+        VALUES ('$name', '$descreption', '$image')";
+
+
+    if (mysqli_query($conn, $sql)) {
+
+        header("Location: habitat.php?success=1");
+        exit;
+
+    } else {
+
+        echo "Error: " . mysqli_error($conn);
+    }
+}
+
+
 
 ?>
 
@@ -79,7 +106,7 @@
                         </svg>
                         <a href="index.php" class="font-medium">Dashboard</a>
                     </button>
-
+            
                     <button data-tab="animals"
                         class="w-full text-left px-3 py-2 rounded flex items-center gap-3 hover:bg-yellow-50">
                         <!-- paw icon -->
@@ -132,14 +159,52 @@
                             </svg>
                             <input id="search" placeholder="Search animals or zones" class="outline-none text-sm" />
                         </div>
-                        <button id="add-top" class="bg-green-500 text-white px-3 py-2 rounded-lg shadow">Add
-                            habitat</button>
+                        <button id="btnHabitat" class="bg-green-600 text-white px-4 py-2 rounded">Add Habitat</button>
+
                     </div>
                 </div>
+    <div  class="habitat hidden flex fixed inset-0 bg-black bg-opacity-40 items-center justify-center">
+
+                                <div class="bg-white p-6 rounded-xl w-full max-w-md shadow-xl">
+
+                        
+                            <form  action="habitat.php" method="POST" class="flex flex-col gap-3 ">
+                                <legend class="text-lg font-semibold mb-2">Habitat Information</legend>
+
+                                <label for="name">Name of habitat:</label>
+                                <input type="text" id="name" name="name" value="<?php echo $name; ?>" 
+                                    class="border rounded px-3 py-2" />
+
+                                <label for="descreption">Descreption:</label>
+                                <textarea type="text" id="descreption" name="descreption" value="<?php echo $descreption; ?>" 
+                                    class="border rounded px-3 py-2" ></textarea>
+                                 <label for="image">Enter the URL:</label>
+                                 <input type="url" id="image" name="image" value="<?php echo $image; ?>"  class="border rounded px-3 py-2" />
+                       
+                                    
+
+                                <div class="flex gap-4 ">
+                                    <input type="submit"
+                                        name="submit" value="Submit"
+                                    class="mt-3 bg-green-500 text-white px-4 py-2 rounded cursor-pointer w-full" />
+                                <button type="button"  id="habitatCancel" class=" bg-orange-300 rounded cursor-pointer text-white px-4 py-2 justify-end items-end w-full ">Cancel</button>    
+                                </div>  
+                            </form>
+                        </div>
+</div>
+
+                   
 
 
 
-                 <?php  $sql = 'SELECT `name`, descreption FROM habitas'; ?>
+                   
+
+
+
+
+
+
+                 <?php  $sql = 'SELECT `name`,image , descreption FROM habitas'; ?>
                <div class="grid grid-cols-3 gap-3">
                             <?php 
                
@@ -150,6 +215,7 @@
                                 
                                     while($row = mysqli_fetch_array($result)){
                                         echo "<div class='border border-4'>";
+                                        echo " <img class='w-full h-1/2 object-cover border-2 ' src=".$row['image'].">";
                                         echo "<p class='p-2'>" . $row['name'] . "</p>";
                                         echo "<p class='p-1'>" . $row['descreption'] . "</p>";
                                         echo "<div class='flex gap-4 p-2 mt-4'>";
@@ -176,6 +242,7 @@
                 
 
 
+        <script src="./habitat.js"></script>
 
 </body>
 </html>

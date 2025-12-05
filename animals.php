@@ -5,14 +5,48 @@
  $image ="";
 if (isset($_POST['submit'])) {
 
-    $name  = $_POST['name'];
-    $type_alimentaire  = $_POST['type_alimentaire'];
+    $name = $_POST['name'];
+    $type_alimentaire = $_POST['type_alimentaire'];
+    $habitat = $_POST['Id_habitat'];
     $image = $_POST['image'];
 
     $sql = "INSERT INTO animals (`name`, type_alimentaire, `image`)
-            VALUES ('$name', '$type_alimentaire', '$image')";
+            VALUES ('$name', '$type_alimentaire', '$habitat' , '$image')";
 
     if (mysqli_query($conn, $sql)) {
+
+        header("Location: animals.php?success=1");
+        exit;
+
+    } else {
+
+        echo "Error: " . mysqli_error($conn);
+    }
+}
+if(isset($_GET['submit'])) {
+    $id= $_GET['id'];
+    $name  = $_GET['name'];
+    $type_alimentaire  = $_GET['type_alimentaire'];
+    $habitat=$_POST['Id_habitat'];
+    $image = $_GET['image'];
+
+    $sql = "UPDATE animals  SET name= '$name', type_alimentaire='$type_alimentaire' , image= '$image', Id_habitat= '$habitat' WHERE id= ".$id;
+           
+
+    if (mysqli_query($conn, $sql)) {
+
+        header("Location: animals.php?success=1");
+        exit;
+
+    } else {
+
+        echo "Error: " . mysqli_error($conn);
+    }
+}
+if(isset($_GET["delete"])){
+    $delete_id = $_GET["delete"];
+    $query_delete = "DELETE FROM animals WHERE id= ".$delete_id;
+    if (mysqli_query($conn, $query_delete)) {
 
         header("Location: animals.php?success=1");
         exit;
@@ -182,6 +216,14 @@ if (isset($_POST['submit'])) {
                     <option value="Herbivore">Herbivore</option>
                      <option value="Omnivore">Omnivore</option>
                 </select>
+                <label for="habitat">Name of habitat:</label>
+            <select type="text" name="Id_habitat" id="habitat"  value="<?php echo $habitat; ?>"
+                   class="border rounded px-3 py-2" >
+                     <option value="1">Savanna</option>
+                     <option value="2">Jungle</option>
+                     <option value="3">Desert</option>
+                     <option value="4">Ocean</option>
+                </select>
 
             <label for="image">Enter the URL:</label>
             <input type="url" id="image" name="image" value="<?php echo $image; ?>" 
@@ -192,7 +234,7 @@ if (isset($_POST['submit'])) {
                 <input type="submit"
                     name="submit" value="Submit"
                    class="mt-3 bg-green-500 text-white px-4 py-2 rounded cursor-pointer w-full" />
-             <button type="button" class=" cancel bg-orange-300 rounded cursor-pointer text-white px-4 py-2 justify-end items-end w-full ">Cancel</button>    
+             <button type="button" id="animalCancel" class="bg-orange-300 rounded cursor-pointer text-white px-4 py-2 justify-end items-end w-full ">Cancel</button>    
             </div>  
         </form>
     </div>
@@ -202,24 +244,25 @@ if (isset($_POST['submit'])) {
 
 
 
-                <?php  $sql = 'SELECT `name`, `image`, type_alimentaire FROM animals'; ?>
+                <?php  $sql = 'SELECT `name`, `image`, type_alimentaire,id FROM animals'; ?>
                <div class="grid grid-cols-3 gap-3">
                             <?php 
                
-                            if($result = $conn -> query($sql)){
+                            if($result = mysqli_query($conn,$sql)){
                                 if(mysqli_num_rows($result)>0){
                                     
                                   
                                 
                                     while($row = mysqli_fetch_array($result)){
-                                        echo "<div class='border border-4'>";
+                                        echo "<div class='border border-4 h-[75%]'>";
                                         echo " <img class='w-full h-1/2 object-cover border-2 ' src=".$row['image'].">";
                                         echo "<p class='p-2'>" . $row['name'] . "</p>";
                                         echo "<p class='p-1'>" . $row['type_alimentaire'] . "</p>";
-                                        echo "<div class='flex gap-4 p-2 mt-4'>";
-                                          echo "<button class='bg-green-400 w-full rounded-lg '>Edit</button>";
-                                          echo "<button class='justify-end items-end w-full rounded-lg bg-red-400'>Delete</button>";
-                                        echo "</div>";
+                                        echo "<div class='flex justify-evenly gap-4 p-2 mt-4 w-full'>";
+                                          echo "<a href='modfier.php?id=" . $row["id"] . "'><button class='px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm w-[120px]'>Edit</button></a>";
+                                          echo "<a href='animals.php?delete=" . $row["id"] ."'><button class=' px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm w-[120px]'>Delete</button></a>";
+                                          echo "</div>";
+                                      
                              echo "</div>";
                                     }   
                                     
@@ -239,6 +282,6 @@ if (isset($_POST['submit'])) {
 
                
 
-<script src="./app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
