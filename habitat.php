@@ -204,7 +204,7 @@ if (isset($_POST['submit'])) {
 
 
 
-                 <?php  $sql = 'SELECT `name`,image , descreption FROM habitas'; ?>
+                 <?php  $sql = 'SELECT Id_h,  `name`,image , descreption FROM habitas'; ?>
                <div class="grid grid-cols-3 gap-3">
                             <?php 
                
@@ -214,13 +214,13 @@ if (isset($_POST['submit'])) {
                                   
                                 
                                     while($row = mysqli_fetch_array($result)){
-                                        echo "<div class='border border-4'>";
+                                        echo "<div class='border border-4'> ";
                                         echo " <img class='w-full h-1/2 object-cover border-2 ' src=".$row['image'].">";
                                         echo "<p class='p-2'>" . $row['name'] . "</p>";
                                         echo "<p class='p-1'>" . $row['descreption'] . "</p>";
                                         echo "<div class='flex gap-4 p-2 mt-4'>";
-                                          echo "<button class='bg-green-400 w-full rounded-lg '>Edit</button>";
-                                          echo "<button class='justify-end items-end w-full rounded-lg bg-red-400'>Delete</button>";
+                                          echo "<a href='editHabitat.php?id=" . $row["Id_h"] . "'><button class='px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm w-[120px]'>Edit</button></a>";
+                                          echo "<a href='editHabitat.php?delete=" . $row["Id_h"] ."'><button class=' px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm w-[120px]'>Delete</button></a>";
                                         echo "</div>";
                              echo "</div>";
                                     }   
