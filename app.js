@@ -9,25 +9,12 @@ addtop.addEventListener('click', ()=>{
  Animal.classList.remove("hidden");
 
 })
-addtop.addEventListener("click",function(){
-
-     console.log("hello");
-})
-
      cancel.addEventListener('click', ()=>{
      Animal.classList.add("hidden");
 
     })
 
-//     btnHabitat.addEventListener('click', ()=>{
-//      console.log("hello")
-//     habitat.classList.remove("hidden");
 
-// })
-
-btnHabitat.addEventListener("click",function(){
-     console.log("click");
-})
 
 
 
